@@ -1,65 +1,47 @@
-let currentID;
-
-// POST - backende bilgi gonderir
 async function postUsers() {
-    let response = await fetch("https://89c843f447a1f97c.mokky.dev/users", {
-        method:"POST", // backend e (server) bilgi gonderme
-        headers:{
-            "Content-Type":"application/json",
+    let input = document.getElementById("input");
+    let inputvalue = input.value;
+
+    await fetch("https://0f01222373e87a68.mokky.dev/todos", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
         },
-        // stringify - js to json
-        // pase - json to js
-        body: JSON.stringify({                                 
-            name:"Aziz",                       
-            age: 13,                 
-        })                  
+        body: JSON.stringify({
+            text: inputvalue,
+        }),
     });
-    let data = await response.json()
-    // currentID = data.id; // patch icin
-    console.log(data);   
-    // return data.id; // patch icin
+    input.value = "";  
+    await getUsers();
 }
 
 
-// GET - backenden bilgileri alir
 async function getUsers() {
-    const response = await fetch("https://89c843f447a1f97c.mokky.dev/users")
+    const response = await fetch("https://0f01222373e87a68.mokky.dev/todos");
     const data = await response.json();
-    console.log(data);   
+
+    let ul = document.getElementById("todos");
+    ul.innerHTML = ""; 
+
+    data.forEach(item => {
+        let li = document.createElement("li");
+        li.innerHTML = item.text;
+
+        let button = document.createElement("button");
+        button.innerHTML = "DELETE";
+
+        button.onclick = () => deleteUsers(item.id);
+
+        li.append(button);
+        ul.append(li);
+    });
 }
 
 
-// PATCH - gonderdigimiz bilgiyi degistirir
-// async function patchUsers(id) {
-//     let response = await fetch(`https://89c843f447a1f97c.mokky.dev/users/${id}`, {
-//         method:"PATCH", // backend e (server) bilgi gonderme
-//         headers:{
-//             "Content-Type":"application/json",
-//         },
-//         // stringify - js to json
-//         // pase - json to js
-//         body: JSON.stringify({                                 
-//             name:"QMamvetov ziz",                       
-//             age: 99,                 
-//         })                  
-//     });
-//     let data = await response.json()
-//     console.log(data);   
-// }
-
-// async function getUsers() {
-//     await postUsers();
-//     await patchUsers(currentID);
-// }
-// getUsers()
-
-// DELETE - backendden bilgi siler
 async function deleteUsers(id) {
-    let response = await fetch(`https://89c843f447a1f97c.mokky.dev/users/${id}`, {
-        method:"DELETE",
-        headers:{
-            "Content-Type":"application/json",
-        },               
+    await fetch(`https://0f01222373e87a68.mokky.dev/todos/${id}`, {
+        method: "DELETE",
     });
-    
+
+    await getUsers();
 }
